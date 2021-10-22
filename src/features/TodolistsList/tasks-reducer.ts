@@ -2,8 +2,9 @@ import {AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType}
 import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType} from '../../api/todolists-api'
 import {Dispatch} from 'redux'
 import {AppRootStateType} from '../../app/store'
-import {setAppErrorAC, SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from '../../app/app-reducer'
+import {SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from '../../app/app-reducer'
 import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils'
+import {call, put} from 'redux-saga/effects';
 
 const initialState: TasksStateType = {}
 
@@ -49,16 +50,25 @@ export const updateTaskAC = (taskId: string, model: UpdateDomainTaskModelType, t
 export const setTasksAC = (tasks: Array<TaskType>, todolistId: string) =>
     ({type: 'SET-TASKS', tasks, todolistId} as const)
 
-// thunks
-export const fetchTasksTC = (todolistId: string) => (dispatch: Dispatch<ActionsType | SetAppStatusActionType>) => {
-    dispatch(setAppStatusAC('loading'))
-    todolistsAPI.getTasks(todolistId)
-        .then((res) => {
-            const tasks = res.data.items
-            dispatch(setTasksAC(tasks, todolistId))
-            dispatch(setAppStatusAC('succeeded'))
-        })
+//sagas
+export function* fetchTasksSaga(action: any) {
+    yield put(setAppStatusAC('loading'))
+    const res = yield call(todolistsAPI.getTasks, action.todolistId)
+
+    const tasks = res.data.items
+    yield put(setTasksAC(tasks, action.todolistId))
+    yield put(setAppStatusAC('succeeded'))
 }
+export const fetchTasksAC = (todolistId: string) => ({type: 'TASKS/FETCH-TASKS', todolistId})
+
+// thunks
+// export const fetchTasksTC = (todolistId: string) => async (dispatch: Dispatch<ActionsType | SetAppStatusActionType>) => {
+//     dispatch(setAppStatusAC('loading'))
+//     const res = await todolistsAPI.getTasks(todolistId)
+//     const tasks = res.data.items
+//     dispatch(setTasksAC(tasks, todolistId))
+//     dispatch(setAppStatusAC('succeeded'))
+// }
 export const removeTaskTC = (taskId: string, todolistId: string) => (dispatch: Dispatch<ActionsType>) => {
     todolistsAPI.deleteTask(todolistId, taskId)
         .then(res => {

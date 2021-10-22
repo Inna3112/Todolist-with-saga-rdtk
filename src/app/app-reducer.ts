@@ -53,22 +53,6 @@ export function* initializeAppSaga() {
 
 export const initializeAppAC = () => ({type: 'APP/INITIALIZED-APP'})
 
-// export const initializeAppTC = () => async (dispatch: Dispatch) => {
-//     try {
-//         const res = await authAPI.me()
-//         if (res.data.resultCode === 0) {
-//             dispatch(setIsLoggedInAC(true));
-//         } else {
-//             handleServerAppError(res.data, dispatch);
-//         }
-//     } catch (error) {
-//         handleServerNetworkError(error, dispatch)
-//     } finally {
-//         dispatch(setIsInitsilizedAC(true))
-//     }
-// }
-
-
 export type SetAppErrorActionType = ReturnType<typeof setAppErrorAC>
 export type SetAppStatusActionType = ReturnType<typeof setAppStatusAC>
 
