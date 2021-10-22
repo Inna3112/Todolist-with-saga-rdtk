@@ -1,10 +1,18 @@
 import {AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType} from './todolists-reducer'
-import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType} from '../../api/todolists-api'
+import {
+    GetTasksResponse,
+    TaskPriorities,
+    TaskStatuses,
+    TaskType,
+    todolistsAPI,
+    UpdateTaskModelType
+} from '../../api/todolists-api'
 import {Dispatch} from 'redux'
 import {AppRootStateType} from '../../app/store'
 import {SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from '../../app/app-reducer'
 import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils'
 import {call, put} from 'redux-saga/effects';
+import {AxiosResponse} from "axios";
 
 const initialState: TasksStateType = {}
 
@@ -51,9 +59,9 @@ export const setTasksAC = (tasks: Array<TaskType>, todolistId: string) =>
     ({type: 'SET-TASKS', tasks, todolistId} as const)
 
 //sagas
-export function* fetchTasksSaga(action: any) {
+export function* fetchTasksSaga(action: ReturnType<typeof fetchTasksAC>) {
     yield put(setAppStatusAC('loading'))
-    const res = yield call(todolistsAPI.getTasks, action.todolistId)
+    const res: AxiosResponse<GetTasksResponse> = yield call(todolistsAPI.getTasks, action.todolistId)
 
     const tasks = res.data.items
     yield put(setTasksAC(tasks, action.todolistId))
@@ -61,14 +69,7 @@ export function* fetchTasksSaga(action: any) {
 }
 export const fetchTasksAC = (todolistId: string) => ({type: 'TASKS/FETCH-TASKS', todolistId})
 
-// thunks
-// export const fetchTasksTC = (todolistId: string) => async (dispatch: Dispatch<ActionsType | SetAppStatusActionType>) => {
-//     dispatch(setAppStatusAC('loading'))
-//     const res = await todolistsAPI.getTasks(todolistId)
-//     const tasks = res.data.items
-//     dispatch(setTasksAC(tasks, todolistId))
-//     dispatch(setAppStatusAC('succeeded'))
-// }
+
 export const removeTaskTC = (taskId: string, todolistId: string) => (dispatch: Dispatch<ActionsType>) => {
     todolistsAPI.deleteTask(todolistId, taskId)
         .then(res => {
