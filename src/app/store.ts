@@ -1,4 +1,4 @@
-import {fetchTasksSaga, removeTaskSaga, tasksReducer} from '../features/TodolistsList/tasks-reducer';
+import {tasksReducer} from '../features/TodolistsList/tasks-reducer';
 import {todolistsReducer} from '../features/TodolistsList/todolists-reducer';
 import {applyMiddleware, combineReducers, createStore} from 'redux'
 import thunkMiddleware from 'redux-thunk'
@@ -6,6 +6,7 @@ import {appReducer, initializeAppSaga} from './app-reducer'
 import {authReducer} from '../features/Login/auth-reducer'
 import createSagaMiddleware from 'redux-saga'
 import {takeEvery} from 'redux-saga/effects'
+import {tasksWatcherSaga} from '../features/TodolistsList/tasks-sagas';
 
 // объединяя reducer-ы с помощью combineReducers,
 // мы задаём структуру нашего единственного объекта-состояния
@@ -28,8 +29,7 @@ sagaMiddleware.run(rootWatcher)
 
 function* rootWatcher(){
     yield takeEvery('APP/INITIALIZED-APP', initializeAppSaga)
-    yield takeEvery('TASKS/FETCH-TASKS', fetchTasksSaga)
-    yield takeEvery('TASKS/REMOVE-TASK-SAGA', removeTaskSaga)
+    yield tasksWatcherSaga()
 }
 
 // а это, чтобы можно было в консоли браузера обращаться к store в любой момент

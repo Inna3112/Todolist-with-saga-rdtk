@@ -1,6 +1,5 @@
 import {AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType} from './todolists-reducer'
 import {
-    GetTasksResponse, ResponseType,
     TaskPriorities,
     TaskStatuses,
     TaskType,
@@ -59,22 +58,6 @@ export const setTasksAC = (tasks: Array<TaskType>, todolistId: string) =>
     ({type: 'SET-TASKS', tasks, todolistId} as const)
 
 //sagas
-export function* fetchTasksSaga(action: ReturnType<typeof fetchTasksAC>) {
-    yield put(setAppStatusAC('loading'))
-    const res: AxiosResponse<GetTasksResponse> = yield call(todolistsAPI.getTasks, action.todolistId)
-
-    const tasks = res.data.items
-    yield put(setTasksAC(tasks, action.todolistId))
-    yield put(setAppStatusAC('succeeded'))
-}
-export const fetchTasksAC = (todolistId: string) => ({type: 'TASKS/FETCH-TASKS', todolistId})
-
-export function* removeTaskSaga(action: ReturnType<typeof removeTaskACSaga>) {
-    let res: AxiosResponse<ResponseType> = yield call(todolistsAPI.deleteTask, action.todolistId, action.taskId)
-
-    yield put(removeTaskAC(action.taskId, action.todolistId))
-}
-export const removeTaskACSaga = (todolistId: string, taskId: string) => ({type: 'TASKS/REMOVE-TASK-SAGA', todolistId, taskId})
 
 
 //thunks

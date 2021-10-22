@@ -50,7 +50,6 @@ export function* initializeAppSaga() {
         yield put(setIsInitsilizedAC(true))
     }
 }
-
 export const initializeAppAC = () => ({type: 'APP/INITIALIZED-APP'})
 
 export type SetAppErrorActionType = ReturnType<typeof setAppErrorAC>
