@@ -1,6 +1,6 @@
 import {AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType} from './todolists-reducer'
 import {
-    GetTasksResponse,
+    GetTasksResponse, ResponseType,
     TaskPriorities,
     TaskStatuses,
     TaskType,
@@ -69,14 +69,15 @@ export function* fetchTasksSaga(action: ReturnType<typeof fetchTasksAC>) {
 }
 export const fetchTasksAC = (todolistId: string) => ({type: 'TASKS/FETCH-TASKS', todolistId})
 
+export function* removeTaskSaga(action: ReturnType<typeof removeTaskACSaga>) {
+    let res: AxiosResponse<ResponseType> = yield call(todolistsAPI.deleteTask, action.todolistId, action.taskId)
 
-export const removeTaskTC = (taskId: string, todolistId: string) => (dispatch: Dispatch<ActionsType>) => {
-    todolistsAPI.deleteTask(todolistId, taskId)
-        .then(res => {
-            const action = removeTaskAC(taskId, todolistId)
-            dispatch(action)
-        })
+    yield put(removeTaskAC(action.taskId, action.todolistId))
 }
+export const removeTaskACSaga = (todolistId: string, taskId: string) => ({type: 'TASKS/REMOVE-TASK-SAGA', todolistId, taskId})
+
+
+//thunks
 export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispatch<ActionsType | SetAppErrorActionType | SetAppStatusActionType>) => {
     dispatch(setAppStatusAC('loading'))
     todolistsAPI.createTask(todolistId, title)
