@@ -6,10 +6,11 @@ import {TodolistsList} from '../features/TodolistsList/TodolistsList'
 import {ErrorSnackbar} from '../components/ErrorSnackbar/ErrorSnackbar'
 import {useDispatch, useSelector} from 'react-redux'
 import {AppRootStateType} from './store'
-import {initializeAppAC, RequestStatusType} from './app-reducer'
+import { RequestStatusType} from './app-reducer'
 import {Login} from '../features/Login/Login';
 import {Redirect, Route, Switch} from 'react-router-dom'
 import {logoutTC} from '../features/Login/auth-reducer';
+import {initializeAppAC} from './app-sagas';
 
 type PropsType = {
     demo?: boolean

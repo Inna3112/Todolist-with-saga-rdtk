@@ -4,8 +4,6 @@ import {
     TaskStatuses,
     TaskType,
 } from '../../api/todolists-api'
-import {Dispatch} from 'redux'
-import {SetAppErrorActionType, SetAppStatusActionType} from '../../app/app-reducer'
 
 
 const initialState: TasksStateType = {}
@@ -73,4 +71,3 @@ type ActionsType =
     | RemoveTodolistActionType
     | SetTodolistsActionType
     | ReturnType<typeof setTasksAC>
-type ThunkDispatch = Dispatch<ActionsType | SetAppStatusActionType | SetAppErrorActionType>

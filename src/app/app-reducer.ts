@@ -36,21 +36,21 @@ export const setAppStatusAC = (status: RequestStatusType) => ({type: 'APP/SET-ST
 export const setIsInitsilizedAC = (value: boolean) => ({type: 'APP/SET-IS-INITIALIZED', value} as const)
 
 
-export function* initializeAppSaga() {
-    try {
-        const res = yield call(authAPI.me)
-        if (res.data.resultCode === 0) {
-            yield put(setIsLoggedInAC(true));
-        } else {
-            handleServerAppError(res.data, put);
-        }
-    } catch (error) {
-        handleServerNetworkError(error, put)
-    } finally {
-        yield put(setIsInitsilizedAC(true))
-    }
-}
-export const initializeAppAC = () => ({type: 'APP/INITIALIZED-APP'})
+// export function* initializeAppSaga() {
+//     try {
+//         const res = yield call(authAPI.me)
+//         if (res.data.resultCode === 0) {
+//             yield put(setIsLoggedInAC(true));
+//         } else {
+//             handleServerAppError(res.data, put);
+//         }
+//     } catch (error) {
+//         handleServerNetworkError(error, put)
+//     } finally {
+//         yield put(setIsInitsilizedAC(true))
+//     }
+// }
+// export const initializeAppAC = () => ({type: 'APP/INITIALIZED-APP'})
 
 export type SetAppErrorActionType = ReturnType<typeof setAppErrorAC>
 export type SetAppStatusActionType = ReturnType<typeof setAppStatusAC>
