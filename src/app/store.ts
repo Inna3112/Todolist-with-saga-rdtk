@@ -5,7 +5,7 @@ import thunkMiddleware from 'redux-thunk'
 import {appReducer} from './app-reducer'
 import {authReducer} from '../features/Login/auth-reducer'
 import createSagaMiddleware from 'redux-saga'
-import {all, takeEvery} from 'redux-saga/effects'
+import {all} from 'redux-saga/effects'
 import {tasksWatcherSaga} from '../features/TodolistsList/tasks-sagas';
 import {appWatcherSaga} from './app-sagas';
 

@@ -35,7 +35,7 @@ export const todolistsAPI = {
     createTask(todolistId: string, taskTitile: string): Promise<AxiosResponse<ResponseType<{ item: TaskType }>>> {
         return instance.post<ResponseType<{ item: TaskType }>>(`todo-lists/${todolistId}/tasks`, {title: taskTitile});
     },
-    updateTask(todolistId: string, taskId: string, model: UpdateTaskModelType) {
+    updateTask(todolistId: string, taskId: string, model: UpdateTaskModelType): Promise<AxiosResponse<ResponseType<TaskType>>> {
         return instance.put<ResponseType<TaskType>>(`todo-lists/${todolistId}/tasks/${taskId}`, model);
     }
 }

@@ -64,7 +64,7 @@ export function* updateTaskSaga(action: ReturnType<typeof updateTaskACSaga>) {
         ...action.domainModel
     }
     try {
-        const res = yield call(todolistsAPI.updateTask, action.todolistId, action.taskId, apiModel)
+        const res: AxiosResponse<ResponseType<TaskType>> = yield call(todolistsAPI.updateTask, action.todolistId, action.taskId, apiModel)
         if (res.data.resultCode === 0) {
             yield put(updateTaskAC(action.taskId, action.domainModel, action.todolistId))
         } else {
