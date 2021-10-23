@@ -8,10 +8,9 @@ import {
 } from '../../api/todolists-api'
 import {Dispatch} from 'redux'
 import {AppRootStateType} from '../../app/store'
-import {SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from '../../app/app-reducer'
+import {SetAppErrorActionType,  SetAppStatusActionType} from '../../app/app-reducer'
 import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils'
-import {call, put} from 'redux-saga/effects';
-import {AxiosResponse} from "axios";
+
 
 const initialState: TasksStateType = {}
 
@@ -59,25 +58,8 @@ export const setTasksAC = (tasks: Array<TaskType>, todolistId: string) =>
 
 //sagas
 
-
 //thunks
-export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispatch<ActionsType | SetAppErrorActionType | SetAppStatusActionType>) => {
-    dispatch(setAppStatusAC('loading'))
-    todolistsAPI.createTask(todolistId, title)
-        .then(res => {
-            if (res.data.resultCode === 0) {
-                const task = res.data.data.item
-                const action = addTaskAC(task)
-                dispatch(action)
-                dispatch(setAppStatusAC('succeeded'))
-            } else {
-                handleServerAppError(res.data, dispatch);
-            }
-        })
-        .catch((error) => {
-            handleServerNetworkError(error, dispatch)
-        })
-}
+
 export const updateTaskTC = (taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string) =>
     (dispatch: ThunkDispatch, getState: () => AppRootStateType) => {
         const state = getState()
