@@ -1,9 +1,8 @@
-import {Dispatch} from "redux";
+import {Dispatch} from 'redux';
 
 import { SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType } from '../../app/app-reducer'
-import {authAPI, LoginRequestType, todolistsAPI} from "../../api/todolists-api";
-import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
-import {addTaskAC} from "../TodolistsList/tasks-reducer";
+import {authAPI, LoginRequestType} from '../../api/todolists-api';
+import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils';
 
 const initialState = {
     isLoggedIn: false
