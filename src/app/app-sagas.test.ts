@@ -19,23 +19,18 @@ beforeEach(() => {
 })
 test('initializeAppSaga login success', () => {
     const gen = initializeAppSaga()
-    let result = gen.next()
-    expect(result.value).toEqual(call(authAPI.me))
 
-    result = gen.next(meResponse)
-    expect(result.value).toEqual(put(setIsLoggedInAC(true)))
-
-    result = gen.next()
-    expect(result.value).toEqual(put(setIsInitsilizedAC(true)))
+    expect(gen.next().value).toEqual(call(authAPI.me))
+    expect(gen.next(meResponse).value).toEqual(put(setIsLoggedInAC(true)))
+    expect(gen.next().value).toEqual(put(setIsInitsilizedAC(true)))
 })
 
 test('initializeAppSaga login unsuccess', () => {
     const gen = initializeAppSaga()
-    let result = gen.next()
-    expect(result.value).toEqual(call(authAPI.me))
+
+    expect(gen.next().value).toEqual(call(authAPI.me))
 
     //В тесте можно мутировать данные, потому что данные перед каждым тестом пересоздаются
     meResponse.resultCode = 1
-    result = gen.next(meResponse)
-    expect(result.value).toEqual(put(setIsInitsilizedAC(true)))
+    expect(gen.next(meResponse).value).toEqual(put(setIsInitsilizedAC(true)))
 })

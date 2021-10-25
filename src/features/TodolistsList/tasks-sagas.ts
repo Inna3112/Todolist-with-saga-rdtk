@@ -14,13 +14,13 @@ import {AppRootStateType} from '../../app/store';
 
 export function* fetchTasksSaga(action: ReturnType<typeof fetchTasksAC>) {
     yield put(setAppStatusAC('loading'))
-    const res: AxiosResponse<GetTasksResponse> = yield call(todolistsAPI.getTasks, action.todolistId)
+    const data: GetTasksResponse = yield call(todolistsAPI.getTasks, action.todolistId)
 
-    const tasks = res.data.items
+    const tasks = data.items
     yield put(setTasksAC(tasks, action.todolistId))
     yield put(setAppStatusAC('succeeded'))
 }
-export const fetchTasksAC = (todolistId: string) => ({type: 'TASKS/FETCH-TASKS', todolistId})
+export const fetchTasksAC = (todolistId: string) => ({type: 'TASKS/FETCH-TASKS', todolistId} as const)
 
 export function* removeTaskSaga(action: ReturnType<typeof removeTaskACSaga>) {
     let res: AxiosResponse<ResponseType> = yield call(todolistsAPI.deleteTask, action.todolistId, action.taskId)
