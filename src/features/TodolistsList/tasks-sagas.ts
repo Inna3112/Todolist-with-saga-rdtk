@@ -9,7 +9,10 @@ import {
     UpdateDomainTaskModelType,
     updateTaskAC,
 } from './tasks-reducer';
-import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils';
+import {
+    handleServerAppErrorSaga,
+    handleServerNetworkErrorSaga
+} from '../../utils/error-utils';
 import {AppRootStateType} from '../../app/store';
 
 export function* fetchTasksSaga(action: ReturnType<typeof fetchTasksAC>) {
@@ -22,12 +25,14 @@ export function* fetchTasksSaga(action: ReturnType<typeof fetchTasksAC>) {
 }
 export const fetchTasksAC = (todolistId: string) => ({type: 'TASKS/FETCH-TASKS', todolistId} as const)
 
+
 export function* removeTaskSaga(action: ReturnType<typeof removeTaskACSaga>) {
     let res: AxiosResponse<ResponseType> = yield call(todolistsAPI.deleteTask, action.todolistId, action.taskId)
 
     yield put(removeTaskAC(action.taskId, action.todolistId))
 }
 export const removeTaskACSaga = (todolistId: string, taskId: string) => ({type: 'TASKS/REMOVE-TASK-SAGA', todolistId, taskId})
+
 
 export function* addTaskSaga(action: ReturnType<typeof addTaskACSaga>) {
     try {
@@ -37,13 +42,15 @@ export function* addTaskSaga(action: ReturnType<typeof addTaskACSaga>) {
             yield put(addTaskAC(task))
             yield put(setAppStatusAC('succeeded'))
         } else {
-            handleServerAppError(res.data, put);
+            handleServerAppErrorSaga(res.data);
         }
     } catch (error) {
-        handleServerNetworkError(error, put)
+        handleServerNetworkErrorSaga(error)
     }
 }
 export const addTaskACSaga = (todolistId: string, title: string) => ({type: 'TASKS/ADD-TASK-SAGA', todolistId, title})
+
+
 export function* updateTaskSaga(action: ReturnType<typeof updateTaskACSaga>) {
     let state: AppRootStateType = yield select()
 
@@ -68,10 +75,10 @@ export function* updateTaskSaga(action: ReturnType<typeof updateTaskACSaga>) {
         if (res.data.resultCode === 0) {
             yield put(updateTaskAC(action.taskId, action.domainModel, action.todolistId))
         } else {
-            handleServerAppError(res.data, put);
+            handleServerAppErrorSaga(res.data);
         }
     } catch (error) {
-        handleServerNetworkError(error, put);
+        handleServerNetworkErrorSaga(error);
     }
 }
 
