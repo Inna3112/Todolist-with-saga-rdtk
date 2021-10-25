@@ -19,12 +19,11 @@ const slice = createSlice({
         setAppStatusAC(state, action: PayloadAction<{status: RequestStatusType}>){
             state.status = action.payload.status
         },
-        setIsInitializedAC(state, action: PayloadAction<{value: boolean}>){
-            state.isInitialized = action.payload.value
+        setIsInitializedAC(state, action: PayloadAction<{isInitialized: boolean}>){
+            state.isInitialized = action.payload.isInitialized
         }
     }
 })
-
 
 export const appReducer = slice.reducer
 export const {setAppErrorAC, setAppStatusAC, setIsInitializedAC} = slice.actions
@@ -43,7 +42,7 @@ export const initializeAppTC = () => (dispatch: Dispatch) => {
             handleServerNetworkError(error, dispatch)
         })
         .finally(() => {
-            dispatch(setIsInitializedAC({value: true}))
+            dispatch(setIsInitializedAC({isInitialized: true}))
         })
 }
 
