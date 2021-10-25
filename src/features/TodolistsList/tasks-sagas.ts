@@ -36,16 +36,16 @@ export const removeTaskACSaga = (todolistId: string, taskId: string) => ({type: 
 
 export function* addTaskSaga(action: ReturnType<typeof addTaskACSaga>) {
     try {
-        const res: AxiosResponse<ResponseType<{ item: TaskType }>> = yield call(todolistsAPI.createTask, action.todolistId, action.title)
-        if (res.data.resultCode === 0) {
-            const task = res.data.data.item
+        const data: ResponseType<{ item: TaskType }> = yield call(todolistsAPI.createTask, action.todolistId, action.title)
+        if (data.resultCode === 0) {
+            const task = data.data.item
             yield put(addTaskAC(task))
             yield put(setAppStatusAC('succeeded'))
         } else {
-            handleServerAppErrorSaga(res.data);
+            yield* handleServerAppErrorSaga(data);
         }
     } catch (error) {
-        handleServerNetworkErrorSaga(error)
+        yield* handleServerNetworkErrorSaga(error)
     }
 }
 export const addTaskACSaga = (todolistId: string, title: string) => ({type: 'TASKS/ADD-TASK-SAGA', todolistId, title})
@@ -75,10 +75,10 @@ export function* updateTaskSaga(action: ReturnType<typeof updateTaskACSaga>) {
         if (res.data.resultCode === 0) {
             yield put(updateTaskAC(action.taskId, action.domainModel, action.todolistId))
         } else {
-            handleServerAppErrorSaga(res.data);
+            yield* handleServerAppErrorSaga(res.data);
         }
     } catch (error) {
-        handleServerNetworkErrorSaga(error);
+        yield* handleServerNetworkErrorSaga(error);
     }
 }
 
