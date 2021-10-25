@@ -1,16 +1,17 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
-import {authAPI} from '../api/todolists-api';
+import {authAPI, ResponseMeType, ResponseType} from '../api/todolists-api';
 import {setIsLoggedInAC} from '../features/Login/auth-reducer';
 import {handleServerAppError, handleServerNetworkError} from '../utils/error-utils';
 import {setIsInitsilizedAC} from './app-reducer';
 
+
 export function* initializeAppSaga() {
     try {
-        const res = yield call(authAPI.me)
-        if (res.data.resultCode === 0) {
+        const data: ResponseType<ResponseMeType> = yield call(authAPI.me)
+        if (data.resultCode === 0) {
             yield put(setIsLoggedInAC(true));
         } else {
-            handleServerAppError(res.data, put);
+            handleServerAppError(data, put);
         }
     } catch (error) {
         handleServerNetworkError(error, put)
