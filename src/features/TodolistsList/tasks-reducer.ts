@@ -1,5 +1,5 @@
 import {
-    addTodolistAC,removeTodolistAC,
+    addTodolistAC, removeTodolistAC,
     setTodolistsAC,
 } from './todolists-reducer'
 import {
@@ -20,31 +20,35 @@ const initialState: TasksStateType = {}
 //данные в санк нужно передавать обьектом пейлоад, если их несколько
 //thunkAPI - это диспатч и гетстейт
 //ВЫГОДА ТАКОЙ САНК: создается 2 екшена - один выполнится при успешном выполнении запроса на сервер, второй при ошибке
+
+// fetchTasksTC
 interface FetchTasksData {
     tasks: TaskType[],
     todolistId: string
 }
+
 export const fetchTasksTC = createAsyncThunk<FetchTasksData, string>('tasks/fetchTasks', (todolistId: string, thunkAPI) => {
     thunkAPI.dispatch(setAppStatusAC({status: 'loading'}))
+    //нужно обязательно вернуть промис в builder
     return todolistsAPI.getTasks(todolistId)
         .then((res) => {
             const tasks = res.data.items
             // thunkAPI.dispatch(setTasksAC({tasks, todolistId}))
             thunkAPI.dispatch(setAppStatusAC({status: 'succeeded'}))
+            //здесь ретурнится промис из then зарезолвленный этим обьектом
             return {tasks, todolistId} as FetchTasksData
         })
 })
 
-interface RemoveTaskData{
+// removeTaskTC
+interface RemoveTaskData {
     taskId: string,
     todolistId: string
 }
-export const removeTaskTC = createAsyncThunk<RemoveTaskData, RemoveTaskData>('tasks/removeTask', (param: {taskId: string, todolistId: string}, thunkAPI) => {
-    return todolistsAPI.deleteTask(param.todolistId, param.taskId)
-        .then(res => ({taskId: param.taskId, todolistId: param.todolistId} as RemoveTaskData))
+export const removeTaskTC = createAsyncThunk<RemoveTaskData, RemoveTaskData>('tasks/removeTask', async (param: { taskId: string, todolistId: string }, thunkAPI) => {
+    const res = todolistsAPI.deleteTask(param.todolistId, param.taskId)
+    return ({taskId: param.taskId, todolistId: param.todolistId} as RemoveTaskData)
 })
-
-
 
 
 export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispatch) => {
@@ -110,13 +114,13 @@ const slice = createSlice({
         //         tasks.splice(index, 1)
         //     }
         // },
-        addTaskAC(state, action: PayloadAction<{task: TaskType}>){
+        addTaskAC(state, action: PayloadAction<{ task: TaskType }>) {
             state[action.payload.task.todoListId].unshift(action.payload.task)
         },
-        updateTaskAC(state, action: PayloadAction<{taskId: string, model: UpdateDomainTaskModelType, todolistId: string}>){
+        updateTaskAC(state, action: PayloadAction<{ taskId: string, model: UpdateDomainTaskModelType, todolistId: string }>) {
             const tasks = state[action.payload.todolistId]
             const index = tasks.findIndex(t => t.id === action.payload.taskId)
-            if(index > -1){
+            if (index > -1) {
                 tasks[index] = {...tasks[index], ...action.payload.model}
             }
         },
@@ -152,7 +156,7 @@ const slice = createSlice({
         builder.addCase(removeTaskTC.fulfilled, (state, action) => {
             const tasks = state[action.payload.todolistId]
             const index = tasks.findIndex(t => t.id === action.payload.taskId)
-            if(index > -1){
+            if (index > -1) {
                 tasks.splice(index, 1)
             }
         });
