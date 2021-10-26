@@ -5,18 +5,18 @@ import {handleServerAppError, handleServerNetworkError} from '../../utils/error-
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AxiosError} from 'axios';
 
-interface LoginData {
-    isLoggedIn: boolean
-}
+// interface LoginData {
+//     isLoggedIn: boolean
+// }
 
-export const loginTC = createAsyncThunk<LoginData, LoginRequestType, {rejectValue: {errors: string[], fieldsErrors?: Array<ErrorResponseType>} }>('auth/login', async (param, thunkAPI) => {
+export const loginTC = createAsyncThunk<undefined, LoginRequestType, {rejectValue: {errors: string[], fieldsErrors?: Array<ErrorResponseType>} }>('auth/login', async (param, thunkAPI) => {
     thunkAPI.dispatch(setAppStatusAC({status: 'loading'}))
     try {
         const res = await authAPI.login(param)
         if (res.data.resultCode === 0) {
             thunkAPI.dispatch(setAppStatusAC({status: 'succeeded'}))
             // thunkAPI.dispatch(setIsLoggedInAC({value: true}))
-            return {isLoggedIn: true} as LoginData
+            return
         } else {
             handleServerAppError(res.data, thunkAPI.dispatch)
             return thunkAPI.rejectWithValue({errors: res.data.messages, fieldsErrors: res.data.fieldsErrors})
@@ -46,8 +46,8 @@ const slice = createSlice({
         }
     },
     extraReducers: builder => {
-        builder.addCase(loginTC.fulfilled, (state, action) => {
-            state.isLoggedIn = action.payload.isLoggedIn
+        builder.addCase(loginTC.fulfilled, (state) => {
+            state.isLoggedIn = true
         })
     }
 })
