@@ -13,7 +13,7 @@ import {AppRootStateType} from '../../app/store'
 import {setAppStatusAC} from '../../app/app-reducer'
 import {handleServerAppError, handleServerNetworkError} from '../../utils/error-utils'
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AxiosError} from "axios";
+import axios, {AxiosError} from "axios";
 
 const initialState: TasksStateType = {}
 
@@ -52,7 +52,8 @@ export const removeTaskTC = createAsyncThunk<RemoveTaskData, RemoveTaskData>('ta
 })
 
 
-export const addTaskTC = createAsyncThunk<TaskType , { title: string, todolistId: string }, { rejectValue: null }>('tasks/addTask', async (param: { title: string, todolistId: string }, thunkAPI) => {
+// @ts-ignore
+export const addTaskTC = createAsyncThunk<TaskType, { title: string, todolistId: string }, { rejectValue: null }>('tasks/addTask', async (param: { title: string, todolistId: string }, thunkAPI) => {
     thunkAPI.dispatch(setAppStatusAC({status: 'loading'}))
     try {
         const res = await todolistsAPI.createTask(param.todolistId, param.title)
@@ -64,9 +65,11 @@ export const addTaskTC = createAsyncThunk<TaskType , { title: string, todolistId
             return thunkAPI.rejectWithValue(null)
         }
     } catch (err) {
-        const error: AxiosError = err
-        handleServerNetworkError(error, thunkAPI.dispatch)
-        return thunkAPI.rejectWithValue(null)
+        const error: AxiosError | unknown = err
+        if(axios.isAxiosError(error)){
+            handleServerNetworkError(error, thunkAPI.dispatch)
+            return thunkAPI.rejectWithValue(null)
+        }
     }
 })
 
